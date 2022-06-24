@@ -1,0 +1,9 @@
+{
+  "name": "create-fwa",
+  "version": "0.1.0",
+  "main": "src/index.js",
+  "dependencies": {
+    "commander": "^9.3.0",
+    "fs-extra": "^10.1.0"
+  }
+}
