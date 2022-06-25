@@ -8,6 +8,12 @@ async function createNewPlayground() {
 
   let playgroundDir = path.join(__dirname, "../../playgrounds", name);
   execSync(`node ./packages/create-fwa ${playgroundDir}`, { stdio: "inherit" });
+
+  //build packages
+
+  //pack packages
+
+  //install packages
 }
 
 createNewPlayground();

@@ -11,5 +11,8 @@
   "license": "MIT",
   "devDependencies": {
     "fs-extra": "^10.1.0"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
