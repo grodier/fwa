@@ -9,11 +9,12 @@ async function createNewPlayground() {
   let playgroundDir = path.join(__dirname, "../../playgrounds", name);
   execSync(`node ./packages/create-fwa ${playgroundDir}`, { stdio: "inherit" });
 
-  //build packages
+  execSync(`node ./scripts/build/pack.js`, { stdio: "inherit" });
 
-  //pack packages
-
-  //install packages
+  execSync(`npm install ../../package-zips/fwa-scripts-0.1.0.tgz`, {
+    stdio: "inherit",
+    cwd: playgroundDir,
+  });
 }
 
 createNewPlayground();

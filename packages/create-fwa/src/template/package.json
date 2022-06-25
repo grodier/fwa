@@ -1,5 +1,7 @@
 {
   "name": "fwa-playground",
   "private": true,
-  "scripts": {}
+  "scripts": {
+    "dev": "fwa dev"
+  }
 }

@@ -2,9 +2,13 @@
   "name": "fwa-scripts",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "bin": {
+    "fwa": "./dist/index.js"
+  },
   "scripts": {
     "build": "rm -rf dist && rollup -c && tsc --emitDeclarationOnly",
+    "local-pack": "npm pack --pack-destination='../../package-zips'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

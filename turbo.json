@@ -4,6 +4,9 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"]
+    },
+    "local-pack": {
+      "dependsOn": ["build"]
     }
   }
 }

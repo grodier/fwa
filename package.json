@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "turbo run build",
+    "local-pack": "turbo run local-pack --force",
+    "pack": "npm pack --workpspaces=true",
     "playground": "node ./scripts/playground/new.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
