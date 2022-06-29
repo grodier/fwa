@@ -2,6 +2,7 @@
   "name": "fwa-playground",
   "private": true,
   "scripts": {
+    "build": "fwa build",
     "dev": "fwa dev"
   }
 }
