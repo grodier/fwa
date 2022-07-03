@@ -1,4 +1,5 @@
 import * as path from "path";
+import * as fs from "fs";
 
 export interface AppConfig {
   /**
@@ -11,6 +12,31 @@ export interface AppConfig {
 export interface FwaConfig {
   rootDirectory: string;
   routeDirectory: string;
+  routes: RouteManifest;
+}
+
+export interface RouteManifest {
+  [routeId: string]: {
+    filePath: string;
+    serverPath: string;
+  };
+}
+
+function generateRoutes(routeDirectory: string): RouteManifest {
+  const routes = fs.readdirSync(routeDirectory);
+  let routeObj: RouteManifest = {};
+  routes.forEach((route) => {
+    routeObj[stripFileExtension(route)] = {
+      serverPath: "/",
+      filePath: path.resolve(routeDirectory, route),
+    };
+  });
+
+  return routeObj;
+}
+
+function stripFileExtension(file: string) {
+  return file.replace(/\.[a-z0-9]+$/i, "");
 }
 
 export function readConfig(): FwaConfig {
@@ -33,8 +59,11 @@ export function readConfig(): FwaConfig {
     appConfig.routeDirectory || "routes"
   );
 
+  let routes = generateRoutes(routeDirectory);
+
   return {
     rootDirectory,
     routeDirectory,
+    routes,
   };
 }
