@@ -40,7 +40,7 @@ function stripFileExtension(file: string) {
   return file.replace(/\.[a-z0-9]+$/i, "");
 }
 
-export function readConfig(): FwaConfig {
+export async function readConfig(): Promise<FwaConfig> {
   let fwaRoot = process.cwd();
 
   let rootDirectory = path.resolve(fwaRoot);
@@ -48,7 +48,7 @@ export function readConfig(): FwaConfig {
 
   let appConfig: AppConfig;
   try {
-    appConfig = require(configFile);
+    appConfig = await import(configFile);
   } catch (error) {
     throw new Error(
       `Error loading FWA config in ${configFile}\n${String(error)}`
