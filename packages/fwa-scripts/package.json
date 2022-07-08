@@ -13,7 +13,8 @@
   "scripts": {
     "build": "rm -rf dist && rollup -c && tsc --emitDeclarationOnly",
     "local-pack": "npm pack --pack-destination='../../package-zips'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "rm -rf dist && rollup -c --watch"
   },
   "author": "",
   "license": "MIT",
