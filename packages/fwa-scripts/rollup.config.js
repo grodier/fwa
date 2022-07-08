@@ -35,27 +35,25 @@ function copyToPlaygrounds() {
   return {
     name: "copy-to-fwa-playground",
     async writeBundle(options) {
-      let playgroundsDir = path.join(__dirname, "../../playgrounds");
+      let playgroundDir = path.join(__dirname, "../../playground");
 
-      if (!fse.existsSync(playgroundsDir)) {
+      if (
+        !fse.existsSync(playgroundDir) ||
+        !fse.statSync(playgroundDir).isDirectory()
+      ) {
         return;
       }
-      let playgrounds = await fs.promises.readdir(playgroundsDir);
+
       let writtenDir = path.join(__dirname, options.dir);
-      for (let playground of playgrounds) {
-        let playgroundDir = path.join(playgroundsDir, playground);
-        if (!fse.statSync(playgroundDir).isDirectory()) {
-          continue;
-        }
-        let destDir = path.join(
-          playgroundDir,
-          "node_modules",
-          packageJson.name,
-          "dist"
-        );
-        await fse.copy(writtenDir, destDir);
-        //await triggerLiveReload(playgroundDir);
-      }
+
+      let destDir = path.join(
+        playgroundDir,
+        "node_modules",
+        packageJson.name,
+        "dist"
+      );
+      await fse.copy(writtenDir, destDir);
+      //await triggerLiveReload(playgroundDir);
     },
   };
 }
