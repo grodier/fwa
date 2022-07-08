@@ -13,6 +13,7 @@ export interface FwaConfig {
   rootDirectory: string;
   routeDirectory: string;
   routes: RouteManifest;
+  buildPath: string;
 }
 
 export interface RouteManifest {
@@ -61,7 +62,10 @@ export function readConfig(): FwaConfig {
 
   let routes = generateRoutes(routeDirectory);
 
+  let buildPath = path.resolve(rootDirectory, "build");
+
   return {
+    buildPath,
     rootDirectory,
     routeDirectory,
     routes,

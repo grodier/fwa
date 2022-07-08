@@ -1,11 +1,46 @@
 import type { FwaConfig } from "./config";
 import * as esbuild from "esbuild";
+import path from "path";
+import fs from "fs";
 
-export async function build(config: FwaConfig) {
-  await buildServerRoutes(config);
+export interface RouteAssetManifest {
+  [routeId: string]: {
+    modulePath: string;
+    serverPath: string;
+  };
 }
 
-async function buildServerRoutes(config: FwaConfig) {
+function generateRouteAssetManifest(
+  config: FwaConfig,
+  metafile: esbuild.Metafile
+): RouteAssetManifest {
+  let assetManifest: RouteAssetManifest = {};
+  for (const [routeOutputKey, { entryPoint }] of Object.entries(
+    metafile.outputs
+  )) {
+    if (entryPoint) {
+      const routeName = path.basename(entryPoint, path.extname(entryPoint));
+      assetManifest[routeName] = {
+        serverPath: "/",
+        modulePath: path.resolve(config.rootDirectory, routeOutputKey),
+      };
+    }
+  }
+  return assetManifest;
+}
+
+export async function build(config: FwaConfig) {
+  let { metafile } = await buildServerRoutes(config);
+  let manifest = generateRouteAssetManifest(config, metafile);
+  writeFileSafe(
+    path.join(config.buildPath, "route-asset-manifest.json"),
+    JSON.stringify(manifest, null, 2)
+  );
+}
+
+async function buildServerRoutes(
+  config: FwaConfig
+): Promise<esbuild.BuildResult> {
   let entryPoints: esbuild.BuildOptions["entryPoints"] = {};
   for (const [routeId, route] of Object.entries(config.routes)) {
     entryPoints[routeId] = route.filePath;
@@ -13,8 +48,16 @@ async function buildServerRoutes(config: FwaConfig) {
 
   console.log("entry points", entryPoints);
 
-  let result = await esbuild.build({
+  return esbuild.build({
     entryPoints,
-    outdir: "dist",
+    outdir: "build/routes",
+    format: "cjs",
+    metafile: true,
   });
+}
+
+async function writeFileSafe(file: string, contents: string): Promise<string> {
+  await fs.promises.mkdir(path.dirname(file), { recursive: true });
+  await fs.promises.writeFile(file, contents);
+  return file;
 }

@@ -23,6 +23,7 @@
     "@babel/preset-typescript": "^7.17.12",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-node-resolve": "^13.3.0",
+    "@types/express": "^4.17.13",
     "@types/node": "^18.0.0",
     "rollup": "^2.75.7",
     "rollup-plugin-preserve-shebangs": "^0.2.0",
