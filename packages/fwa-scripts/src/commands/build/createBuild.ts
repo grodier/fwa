@@ -1,5 +1,5 @@
-import { readConfig } from "../../config";
-import { build } from "../../compiler";
+import { readConfig } from "../../config.js";
+import { build } from "../../compiler.js";
 
 export async function createBuild() {
   if (!process.env.NODE_ENV) process.env.NODE_ENV = "production";

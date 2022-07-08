@@ -1,8 +1,8 @@
 import type * as Express from "express";
 import express from "express";
 import path from "path";
-import { readConfig } from "../../config";
-import type { RouteAssetManifest } from "../../compiler";
+import { readConfig } from "../../config.js";
+import type { RouteAssetManifest } from "../../compiler.js";
 
 export async function devServer() {
   let app = express();

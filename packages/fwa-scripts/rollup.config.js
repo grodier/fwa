@@ -12,7 +12,7 @@ let fwaScripts = {
   input: "src/index.ts",
   output: {
     dir: "dist",
-    format: "cjs",
+    format: "esm",
     preserveModules: true,
   },
   plugins: [

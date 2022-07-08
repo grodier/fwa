@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from "commander";
-import { build, dev } from "./commands";
+import { build, dev } from "./commands/index.js";
 
 let program = new Command();
 program

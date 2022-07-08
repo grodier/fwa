@@ -1,7 +1,7 @@
-import type { FwaConfig } from "./config";
+import type { FwaConfig } from "./config.js";
 import * as esbuild from "esbuild";
-import path from "path";
-import fs from "fs";
+import path from "node:path";
+import fs from "node:fs";
 
 export interface RouteAssetManifest {
   [routeId: string]: {

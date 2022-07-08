@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "declaration": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
 
     "rootDir": "src",
     "outDir": "dist",
