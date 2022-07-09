@@ -14,9 +14,6 @@ export async function devServer() {
     app,
     path.join(config.buildPath, "route-asset-manifest.json")
   );
-  app.get("/", function (req, res) {
-    res.send("Hello World");
-  });
 
   app.listen(3000, () => {
     console.log(`FWA started at http://localhost:3000`);
@@ -34,7 +31,7 @@ async function createLocalRoutes(
   for (let route of Object.values(routeAssets)) {
     let routeModule = await import(route.modulePath);
     expressApp.all(route.serverPath, (req, res, next) => {
-      let nodeResponse = routeModule();
+      let nodeResponse = routeModule.default();
       res.status(nodeResponse.status);
       res.send(nodeResponse.body);
     });

@@ -51,7 +51,7 @@ async function buildServerRoutes(
   return esbuild.build({
     entryPoints,
     outdir: "build/routes",
-    format: "cjs",
+    format: "esm",
     metafile: true,
   });
 }

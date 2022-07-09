@@ -48,7 +48,7 @@ export async function readConfig(): Promise<FwaConfig> {
 
   let appConfig: AppConfig;
   try {
-    appConfig = await import(configFile);
+    appConfig = (await import(configFile)).default;
   } catch (error) {
     throw new Error(
       `Error loading FWA config in ${configFile}\n${String(error)}`
