@@ -10,9 +10,10 @@ export async function devServer() {
 
   let config = await readConfig();
 
-  createLocalRoutes(
-    app,
-    path.join(config.buildPath, "route-asset-manifest.json")
+  app.use(
+    await createLocalRoutes(
+      path.join(config.buildPath, "route-asset-manifest.json")
+    )
   );
 
   app.listen(3000, () => {
@@ -20,20 +21,19 @@ export async function devServer() {
   });
 }
 
-async function createLocalRoutes(
-  expressApp: Express.Application,
-  routeManifestPath: string
-) {
+async function createLocalRoutes(routeManifestPath: string) {
+  let app = express();
   let routeAssets: RouteAssetManifest = JSON.parse(
     await fs.readFile(routeManifestPath, "utf-8")
   );
 
   for (let route of Object.values(routeAssets)) {
     let routeModule = await import(route.modulePath);
-    expressApp.all(route.serverPath, (req, res, next) => {
+    app.all(route.serverPath, (req, res, next) => {
       let nodeResponse = routeModule.default();
       res.status(nodeResponse.status);
       res.send(nodeResponse.body);
     });
   }
+  return app;
 }
