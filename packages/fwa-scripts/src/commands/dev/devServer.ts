@@ -1,9 +1,13 @@
-import type * as Express from "express";
 import express from "express";
 import path from "node:path";
 import fs from "node:fs/promises";
+import { installGlobals } from "../../globals.js";
 import { readConfig } from "../../config.js";
 import type { RouteAssetManifest } from "../../compiler.js";
+import { writeReadableStreamToWritable } from "../../stream.js";
+import type { Response as NodeResponse } from "../../fetch.js";
+
+installGlobals();
 
 export async function devServer() {
   let app = express();
@@ -29,10 +33,22 @@ async function createLocalRoutes(routeManifestPath: string) {
 
   for (let route of Object.values(routeAssets)) {
     let routeModule = await import(route.modulePath);
-    app.all(route.serverPath, (req, res, next) => {
-      let nodeResponse = routeModule.default();
+    app.all(route.serverPath, async (req, res, next) => {
+      let nodeResponse: NodeResponse = routeModule.default();
+      res.statusMessage = nodeResponse.statusText;
       res.status(nodeResponse.status);
-      res.send(nodeResponse.body);
+
+      for (let [key, values] of Object.entries(nodeResponse.headers.raw())) {
+        for (let value of values) {
+          res.append(key, value);
+        }
+      }
+
+      if (nodeResponse.body) {
+        await writeReadableStreamToWritable(nodeResponse.body, res);
+      } else {
+        res.end();
+      }
     });
   }
   return app;

@@ -3,4 +3,4 @@ node_modules
 playground
 .turbo
 dist/**
-package-zips
+package-zips/fwa*
