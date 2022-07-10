@@ -21,7 +21,7 @@ function generateRouteAssetManifest(
     if (entryPoint) {
       const routeName = path.basename(entryPoint, path.extname(entryPoint));
       assetManifest[routeName] = {
-        serverPath: "/",
+        serverPath: config.routes[routeName].serverPath,
         modulePath: path.resolve(config.rootDirectory, routeOutputKey),
       };
     }

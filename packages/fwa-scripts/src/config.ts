@@ -27,8 +27,9 @@ function generateRoutes(routeDirectory: string): RouteManifest {
   const routes = fs.readdirSync(routeDirectory);
   let routeObj: RouteManifest = {};
   routes.forEach((route) => {
-    routeObj[stripFileExtension(route)] = {
-      serverPath: "/",
+    let routeKey = stripFileExtension(route);
+    routeObj[routeKey] = {
+      serverPath: `/${routeServerPathResolver(routeKey)}`,
       filePath: path.resolve(routeDirectory, route),
     };
   });
@@ -38,6 +39,11 @@ function generateRoutes(routeDirectory: string): RouteManifest {
 
 function stripFileExtension(file: string) {
   return file.replace(/\.[a-z0-9]+$/i, "");
+}
+
+function routeServerPathResolver(routePattern: string): string {
+  let routeParts = routePattern.split(".");
+  return routeParts.filter((route) => route !== "index").join("/");
 }
 
 export async function readConfig(): Promise<FwaConfig> {
