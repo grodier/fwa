@@ -11,6 +11,8 @@
     "dist/**"
   ],
   "scripts": {
+    "preinstall": "mkdir dist && touch ./dist/index.js",
+    "postinstall": "[ -s ./dist/index.js ] || rm -rf dist",
     "build": "rm -rf dist && rollup -c && tsc --emitDeclarationOnly",
     "local-pack": "npm pack --pack-destination='../../package-zips'",
     "test": "echo \"Error: no test specified\" && exit 1",
