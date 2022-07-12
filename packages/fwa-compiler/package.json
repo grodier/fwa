@@ -1,5 +1,5 @@
 {
-  "name": "fwa-compiler",
+  "name": "@grodier/fwa-compiler",
   "version": "0.1.0",
   "description": "",
   "type": "module",
