@@ -1,0 +1,13 @@
+{
+  "name": "fwa-playground",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "fwa build",
+    "dev": "fwa dev"
+  },
+  "dependencies": {
+    "@grodier/fwa-scripts": "file:../package-zips/grodier-fwa-scripts-0.1.0.tgz",
+    "@grodier/fwa-compiler": "file:../package-zips/grodier-fwa-compiler-0.1.0.tgz"
+  }
+}

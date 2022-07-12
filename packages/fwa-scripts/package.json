@@ -11,7 +11,7 @@
     "dist/**"
   ],
   "scripts": {
-    "preinstall": "mkdir dist && touch ./dist/index.js",
+    "preinstall": "mkdir -p dist && touch ./dist/index.js",
     "postinstall": "[ -s ./dist/index.js ] || rm -rf dist",
     "build": "rm -rf dist && rollup -c && tsc --emitDeclarationOnly",
     "local-pack": "npm pack --pack-destination='../../package-zips'",
@@ -22,6 +22,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@grodier/fwa-compiler": "*",
     "@remix-run/web-fetch": "file:remix-run-web-fetch-4.1.1.tgz",
     "@remix-run/web-file": "^3.0.2",
     "@remix-run/web-stream": "^1.0.3",

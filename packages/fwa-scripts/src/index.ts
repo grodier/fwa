@@ -7,5 +7,5 @@ program
   .version("0.1.0")
   .description("fwa scripts")
   .addCommand(build)
-  .addCommand(dev)
+  .addCommand(dev, { hidden: true })
   .parseAsync();

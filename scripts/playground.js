@@ -8,14 +8,22 @@ async function createNewPlayground() {
 
   fs.rmSync(playgroundDir, { recursive: true, force: true });
 
-  execSync(`node ./packages/create-fwa ${playgroundDir}`, { stdio: "inherit" });
+  execSync(`node ./packages/create-fwa ${playgroundDir} --dev`, {
+    stdio: "inherit",
+  });
 
   execSync(`node ./scripts/local-pack.js`, { stdio: "inherit" });
 
-  execSync(`npm install ../package-zips/fwa-scripts-0.1.0.tgz`, {
+  execSync(`npm install`, {
+    cwd: playgroundDir,
+    stdio: "inherit",
+  });
+  /*
+  execSync(`npm install ../package-zips/grodier-fwa-scripts-0.1.0.tgz`, {
     stdio: "inherit",
     cwd: playgroundDir,
   });
+  */
 }
 
 createNewPlayground();
