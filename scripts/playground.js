@@ -8,7 +8,9 @@ async function createNewPlayground() {
 
   fs.rmSync(playgroundDir, { recursive: true, force: true });
 
-  execSync(`node ./packages/create-fwa ${playgroundDir} --dev`, {
+  execSync(`npx turbo run build`, { stdio: "inherit" });
+
+  execSync(`node ./packages/create-fwa/dist/index.js ${playgroundDir} --dev`, {
     stdio: "inherit",
   });
 

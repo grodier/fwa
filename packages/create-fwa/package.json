@@ -1,12 +1,35 @@
 {
-  "name": "create-fwa",
+  "name": "@grodier/create-fwa",
   "version": "0.1.0",
-  "main": "src/index.js",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "files": [
+    "dist/**"
+  ],
+  "bin": {
+    "create-fwa": "./dist/index.js"
+  },
   "scripts": {
+    "build": "rm -rf dist && rollup -c && tsc --emitDeclarationOnly",
+    "local-pack": "npm pack --pack-destination='../../package-zips'",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "rm -rf dist && rollup -c --watch",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
+    "@grodier/fwa-scripts": "*",
     "commander": "^9.3.0",
     "fs-extra": "^10.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.5",
+    "@babel/preset-typescript": "^7.17.12",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@types/node": "^18.0.0",
+    "fs-extra": "^10.1.0",
+    "rollup": "^2.75.7",
+    "rollup-plugin-preserve-shebangs": "^0.2.0",
+    "typescript": "^4.7.4"
   }
 }

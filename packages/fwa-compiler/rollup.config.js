@@ -10,7 +10,7 @@ function isBareModuleId(id) {
   return !id.startsWith(".") && !path.isAbsolute(id);
 }
 
-let fwaScripts = {
+let fwaCompiler = {
   external: isBareModuleId,
   input: "src/index.ts",
   output: {
@@ -57,5 +57,5 @@ function copyToPlaygrounds() {
 }
 
 export default function rollup() {
-  return [fwaScripts];
+  return [fwaCompiler];
 }

@@ -4,7 +4,6 @@ import path from "node:path";
 import { preserveShebangs } from "rollup-plugin-preserve-shebangs";
 import fs from "node:fs";
 import fse from "fs-extra";
-import copy from "rollup-plugin-copy";
 
 const packageJson = JSON.parse(fs.readFileSync("./package.json"));
 
@@ -12,9 +11,9 @@ function isBareModuleId(id) {
   return !id.startsWith(".") && !path.isAbsolute(id);
 }
 
-let fwaScripts = {
+let createFwa = {
   external: isBareModuleId,
-  input: ["src/index.ts", "src/cli.ts"],
+  input: "src/index.ts",
   output: {
     dir: "dist",
     format: "esm",
@@ -28,7 +27,6 @@ let fwaScripts = {
       extensions: [".ts"],
     }),
     preserveShebangs(),
-    copy({ targets: [{ src: "src/templates", dest: "dist" }] }),
     copyToPlaygrounds(),
   ],
 };
@@ -61,5 +59,5 @@ function copyToPlaygrounds() {
 }
 
 export default function rollup() {
-  return [fwaScripts];
+  return [createFwa];
 }
