@@ -3,11 +3,17 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import { installGlobals } from "../../globals.js";
 import { readConfig } from "../../config.js";
-import type { RouteAssetManifest } from "../../compiler.js";
 import { writeReadableStreamToWritable } from "../../stream.js";
 import type { Response as NodeResponse } from "../../fetch.js";
 
 installGlobals();
+
+interface RouteAssetManifest {
+  [routeId: string]: {
+    modulePath: string;
+    serverPath: string;
+  };
+}
 
 export async function devServer() {
   let app = express();

@@ -1,6 +1,5 @@
 import { readConfig } from "../../config.js";
-import { build } from "../../compiler.js";
-//import { hello } from "@grodier/fwa-compiler";
+import { build } from "@grodier/fwa-compiler";
 
 export async function createBuild() {
   //hello();
