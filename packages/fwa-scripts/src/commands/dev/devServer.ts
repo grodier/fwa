@@ -5,15 +5,9 @@ import { installGlobals } from "../../globals.js";
 import { readConfig } from "../../config.js";
 import { writeReadableStreamToWritable } from "../../stream.js";
 import type { Response as NodeResponse } from "../../fetch.js";
+import type { RouteAssetManifest } from "@grodier/fwa-compiler";
 
 installGlobals();
-
-interface RouteAssetManifest {
-  [routeId: string]: {
-    modulePath: string;
-    serverPath: string;
-  };
-}
 
 export async function devServer() {
   let app = express();

@@ -1,5 +1,6 @@
 import * as path from "node:path";
 import * as fs from "node:fs";
+import type { FwaConfig } from "@grodier/fwa-compiler";
 
 export interface AppConfig {
   /**
@@ -9,23 +10,9 @@ export interface AppConfig {
   routeDirectory: string;
 }
 
-export interface FwaConfig {
-  rootDirectory: string;
-  routeDirectory: string;
-  routes: RouteManifest;
-  buildPath: string;
-}
-
-export interface RouteManifest {
-  [routeId: string]: {
-    filePath: string;
-    serverPath: string;
-  };
-}
-
-function generateRoutes(routeDirectory: string): RouteManifest {
+function generateRoutes(routeDirectory: string): FwaConfig["routes"] {
   const routes = fs.readdirSync(routeDirectory);
-  let routeObj: RouteManifest = {};
+  let routeObj: FwaConfig["routes"] = {};
   routes.forEach((route) => {
     let routeKey = stripFileExtension(route);
     routeObj[routeKey] = {

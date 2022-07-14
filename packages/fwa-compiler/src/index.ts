@@ -2,7 +2,7 @@ import * as esbuild from "esbuild";
 import path from "node:path";
 import fs from "node:fs";
 
-interface FwaConfig {
+export interface FwaConfig {
   rootDirectory: string;
   routeDirectory: string;
   routes: RouteManifest;
