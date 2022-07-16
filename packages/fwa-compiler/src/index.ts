@@ -46,7 +46,6 @@ function generateRouteAssetManifest(
 export async function build(config: FwaConfig) {
   let serverRouteBuild = await buildServerRoutes(config);
   let manifest = generateRouteAssetManifest(config, serverRouteBuild.metafile);
-  console.log("MF", manifest);
   await writeFileSafe(
     path.join(config.buildPath, "route-asset-manifest.json"),
     JSON.stringify(manifest, null, 2)
@@ -88,8 +87,6 @@ async function buildServerRoutes(
     entryPoints[routeId] = route.filePath;
   }
 
-  console.log("entry points", entryPoints);
-
   return esbuild.build({
     entryPoints,
     outdir: "build/routes",
@@ -99,7 +96,6 @@ async function buildServerRoutes(
 }
 
 async function writeFileSafe(file: string, contents: string): Promise<string> {
-  console.log("FILE", file);
   await fs.promises.mkdir(path.dirname(file), { recursive: true });
   await fs.promises.writeFile(file, contents);
   return file;
