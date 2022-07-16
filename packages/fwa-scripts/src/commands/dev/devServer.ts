@@ -1,4 +1,5 @@
 import express from "express";
+import type { Server } from "node:http";
 import path from "node:path";
 import fs from "node:fs/promises";
 import exitHook from "exit-hook";
@@ -7,6 +8,7 @@ import { readConfig } from "../../config.js";
 import { writeReadableStreamToWritable } from "../../stream.js";
 import type { Response as NodeResponse } from "../../fetch.js";
 import type { RouteAssetManifest } from "@grodier/fwa-compiler";
+import * as compiler from "@grodier/fwa-compiler";
 
 installGlobals();
 
@@ -15,14 +17,18 @@ export async function devServer() {
 
   let config = await readConfig();
 
-  app.use(
-    await createLocalRoutes(
-      path.join(config.buildPath, "route-asset-manifest.json")
-    )
-  );
-
-  app.listen(3000, () => {
-    console.log(`FWA started at http://localhost:3000`);
+  let server: Server | null;
+  let closeWatcher = await compiler.watch(config, {
+    async onInitialBuild() {
+      app.use(
+        await createLocalRoutes(
+          path.join(config.buildPath, "route-asset-manifest.json")
+        )
+      );
+      server = app.listen(3000, () => {
+        console.log(`FWA started at http://localhost:3000`);
+      });
+    },
   });
 
   let resolve: () => void;
@@ -31,6 +37,9 @@ export async function devServer() {
   });
   await new Promise<void>((r) => {
     resolve = r;
+  }).then(async () => {
+    await closeWatcher();
+    server!?.close();
   });
 }
 

@@ -55,8 +55,16 @@ export async function build(config: FwaConfig) {
   return serverRouteBuild;
 }
 
-export async function watch(config: FwaConfig) {
+export interface WatcherOptions {
+  onInitialBuild?(): void;
+}
+
+export async function watch(
+  config: FwaConfig,
+  { onInitialBuild }: WatcherOptions
+) {
   let serverRouteBuild = await build(config);
+  onInitialBuild?.();
 
   let watcher = chokidar.watch(config.routeDirectory, {
     persistent: true,
