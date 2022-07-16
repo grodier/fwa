@@ -1,6 +1,7 @@
 import express from "express";
 import path from "node:path";
 import fs from "node:fs/promises";
+import exitHook from "exit-hook";
 import { installGlobals } from "../../globals.js";
 import { readConfig } from "../../config.js";
 import { writeReadableStreamToWritable } from "../../stream.js";
@@ -22,6 +23,14 @@ export async function devServer() {
 
   app.listen(3000, () => {
     console.log(`FWA started at http://localhost:3000`);
+  });
+
+  let resolve: () => void;
+  exitHook(() => {
+    resolve();
+  });
+  await new Promise<void>((r) => {
+    resolve = r;
   });
 }
 

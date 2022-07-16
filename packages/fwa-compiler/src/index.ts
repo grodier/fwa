@@ -1,6 +1,7 @@
 import * as esbuild from "esbuild";
 import path from "node:path";
 import fs from "node:fs";
+import chokidar from "chokidar";
 
 export interface FwaConfig {
   rootDirectory: string;
@@ -43,13 +44,32 @@ function generateRouteAssetManifest(
 }
 
 export async function build(config: FwaConfig) {
-  let { metafile } = await buildServerRoutes(config);
-  let manifest = generateRouteAssetManifest(config, metafile);
+  let serverRouteBuild = await buildServerRoutes(config);
+  let manifest = generateRouteAssetManifest(config, serverRouteBuild.metafile);
   console.log("MF", manifest);
   await writeFileSafe(
     path.join(config.buildPath, "route-asset-manifest.json"),
     JSON.stringify(manifest, null, 2)
   );
+
+  return serverRouteBuild;
+}
+
+export async function watch(config: FwaConfig) {
+  let serverRouteBuild = await build(config);
+
+  let watcher = chokidar.watch(config.routeDirectory, {
+    persistent: true,
+    ignoreInitial: true,
+    awaitWriteFinish: {
+      stabilityThreshold: 100,
+      pollInterval: 100,
+    },
+  });
+
+  return async function closeWatcher() {
+    await watcher.close();
+  };
 }
 
 async function buildServerRoutes(
