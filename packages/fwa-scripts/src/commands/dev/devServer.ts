@@ -9,6 +9,7 @@ import { writeReadableStreamToWritable } from "../../stream.js";
 import type { Response as NodeResponse } from "../../fetch.js";
 import type { RouteAssetManifest } from "@grodier/fwa-compiler";
 import * as compiler from "@grodier/fwa-compiler";
+import { importModule, updateLocalModuleCache } from "./moduleCacheResolver.js";
 
 installGlobals();
 
@@ -26,7 +27,7 @@ export async function devServer() {
       )
     );
     for (let route of Object.values(routeAssets)) {
-      let routeModule = await import(route.modulePath);
+      let routeModule = await importModule(route.modulePath);
       router.all(route.serverPath, async (req, res, next) => {
         let nodeResponse: NodeResponse = routeModule.default();
         res.statusMessage = nodeResponse.statusText;
@@ -60,7 +61,7 @@ export async function devServer() {
       });
     },
     async onFileChanged(file) {
-      console.log("FILE UPDATE", file);
+      updateLocalModuleCache(file);
     },
   });
 
