@@ -53,11 +53,14 @@ export async function devServer() {
   });
 
   let server: Server | null;
-  let closeWatcher = await compiler.watch(config, {
+  let closeWatcher = await compiler.watch(config, readConfig, {
     async onInitialBuild() {
       server = app.listen(3000, () => {
         console.log(`FWA started at http://localhost:3000`);
       });
+    },
+    async onFileChanged(file) {
+      console.log("FILE UPDATE", file);
     },
   });
 

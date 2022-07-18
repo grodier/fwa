@@ -2,6 +2,7 @@ import * as esbuild from "esbuild";
 import path from "node:path";
 import fs from "node:fs";
 import chokidar from "chokidar";
+import debounce from "lodash.debounce";
 
 export interface FwaConfig {
   rootDirectory: string;
@@ -43,8 +44,12 @@ function generateRouteAssetManifest(
   return assetManifest;
 }
 
-export async function build(config: FwaConfig) {
-  let serverRouteBuild = await buildServerRoutes(config);
+interface BuildOptions {
+  incremental?: boolean;
+}
+
+export async function build(config: FwaConfig, options?: BuildOptions) {
+  let serverRouteBuild = await buildServerRoutes(config, options);
   let manifest = generateRouteAssetManifest(config, serverRouteBuild.metafile);
   await writeFileSafe(
     path.join(config.buildPath, "route-asset-manifest.json"),
@@ -56,23 +61,68 @@ export async function build(config: FwaConfig) {
 
 export interface WatcherOptions {
   onInitialBuild?(): void;
+  onFileChanged?(file: string): void;
+  onFileAdded?(file: string): void;
+  onFileDeleted?(file: string): void;
 }
 
 export async function watch(
   config: FwaConfig,
-  { onInitialBuild }: WatcherOptions
+  readConfig: () => Promise<FwaConfig>,
+  { onInitialBuild, onFileChanged, onFileAdded, onFileDeleted }: WatcherOptions
 ) {
-  let serverRouteBuild = await build(config);
+  let serverRouteBuild = await build(config, { incremental: true });
   onInitialBuild?.();
 
-  let watcher = chokidar.watch(config.routeDirectory, {
-    persistent: true,
-    ignoreInitial: true,
-    awaitWriteFinish: {
-      stabilityThreshold: 100,
-      pollInterval: 100,
-    },
-  });
+  function disposeBuilder() {
+    serverRouteBuild?.rebuild?.dispose();
+    serverRouteBuild = undefined;
+  }
+
+  let restartBuilders = debounce(async () => {
+    disposeBuilder();
+    config = await readConfig();
+    serverRouteBuild = await build(config, { incremental: true });
+  }, 500);
+
+  let rebuild = debounce(async () => {
+    if (!serverRouteBuild?.rebuild) {
+      disposeBuilder();
+      serverRouteBuild = await build(config, { incremental: true });
+      return;
+    }
+
+    await serverRouteBuild.rebuild().then(async (build) => {
+      let manifest = generateRouteAssetManifest(config, build.metafile);
+      await writeFileSafe(
+        path.join(config.buildPath, "route-asset-manifest.json"),
+        JSON.stringify(manifest, null, 2)
+      );
+    });
+  }, 100);
+
+  let watcher = chokidar
+    .watch(config.routeDirectory, {
+      persistent: true,
+      ignoreInitial: true,
+      awaitWriteFinish: {
+        stabilityThreshold: 100,
+        pollInterval: 100,
+      },
+    })
+    .on("error", (error) => console.error(error))
+    .on("change", async (file) => {
+      onFileChanged?.(file);
+      await rebuild();
+    })
+    .on("add", async (file) => {
+      onFileAdded?.(file);
+      await restartBuilders();
+    })
+    .on("unlink", async (file) => {
+      onFileDeleted?.(file);
+      await restartBuilders();
+    });
 
   return async function closeWatcher() {
     await watcher.close();
@@ -80,7 +130,8 @@ export async function watch(
 }
 
 async function buildServerRoutes(
-  config: FwaConfig
+  config: FwaConfig,
+  options?: BuildOptions
 ): Promise<esbuild.BuildResult> {
   let entryPoints: esbuild.BuildOptions["entryPoints"] = {};
   for (const [routeId, route] of Object.entries(config.routes)) {
@@ -92,6 +143,7 @@ async function buildServerRoutes(
     outdir: "build/routes",
     format: "esm",
     metafile: true,
+    incremental: !!options?.incremental,
   });
 }
 
